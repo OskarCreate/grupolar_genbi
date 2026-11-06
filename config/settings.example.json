@@ -1,0 +1,8 @@
+{
+  "aws_region": "us-east-1",
+  "athena_database": "grupolar_master",
+  "allowed_view": "vw_grupolar_genbi_transferencias",
+  "athena_output_s3": "s3://sql-event-s3/athena-results/",
+  "athena_workgroup": "primary",
+  "bedrock_model_id": "us.amazon.nova-micro-v1:0"
+}

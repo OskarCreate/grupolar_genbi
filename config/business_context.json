@@ -1,0 +1,13 @@
+{
+  "dataset_name": "Grupo Lar - Transferencias internas de recursos",
+  "business_domain": "Construcción - logística interna de materiales entre almacenes y obras",
+  "grain": "One row represents one line of an internal resource transfer inside a transfer voucher (num_comprobante). A voucher can contain several lines (several resources).",
+  "known_business_notes": [
+    "monto_debe is the value of the transferred resources; monto_haber is the reversed amount (returns or cancellations).",
+    "monto_total is a calculated field: monto_debe - monto_haber. It is not stored in the fact table.",
+    "cantidad_recursos is expressed in the unit of measure of each resource (bags, m3, kg, gallons, units...).",
+    "Each transfer has two locations: sede_origen (sends) and sede_destino (receives). Both come from the same dimension (role-playing dimension).",
+    "Currency is Peruvian soles (PEN). Data covers January to December 2025.",
+    "The chart of accounts is real (CONCAR); transfers, resources and locations are simulated for academic purposes."
+  ]
+}

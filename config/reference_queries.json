@@ -1,0 +1,93 @@
+[
+  {
+    "id": "GQ01",
+    "question": "cuantas transferencias se registraron?",
+    "metric": "numero_transferencias",
+    "reference_sql": "SELECT COUNT(DISTINCT transaccion_id) AS numero_transferencias FROM vw_grupolar_genbi_transferencias",
+    "expected_value": 874
+  },
+  {
+    "id": "GQ02",
+    "question": "cuantos comprobantes de transferencia se emitieron?",
+    "metric": "numero_comprobantes",
+    "reference_sql": "SELECT COUNT(DISTINCT num_comprobante) AS numero_comprobantes FROM vw_grupolar_genbi_transferencias",
+    "expected_value": 332
+  },
+  {
+    "id": "GQ03",
+    "question": "cual fue el valor transferido total?",
+    "metric": "valor_transferido",
+    "reference_sql": "SELECT SUM(monto_debe) AS valor_transferido FROM vw_grupolar_genbi_transferencias",
+    "expected_value": 2348538.23
+  },
+  {
+    "id": "GQ04",
+    "question": "cual fue el monto total neto?",
+    "metric": "monto_total_neto",
+    "reference_sql": "SELECT SUM(monto_debe - monto_haber) AS monto_total_neto FROM vw_grupolar_genbi_transferencias",
+    "expected_value": 2130565.47
+  },
+  {
+    "id": "GQ05",
+    "question": "cual fue el monto haber total?",
+    "metric": "monto_haber",
+    "reference_sql": "SELECT SUM(monto_haber) AS monto_haber FROM vw_grupolar_genbi_transferencias",
+    "expected_value": 217972.76
+  },
+  {
+    "id": "GQ06",
+    "question": "cual fue el porcentaje revertido?",
+    "metric": "porcentaje_revertido",
+    "reference_sql": "SELECT SUM(monto_haber) * 100 / NULLIF(SUM(monto_debe), 0) AS porcentaje_revertido FROM vw_grupolar_genbi_transferencias",
+    "expected_value": 9.2812
+  },
+  {
+    "id": "GQ07",
+    "question": "cual fue el valor promedio por comprobante?",
+    "metric": "valor_promedio_comprobante",
+    "reference_sql": "SELECT SUM(monto_debe) / NULLIF(COUNT(DISTINCT num_comprobante), 0) AS valor_promedio_comprobante FROM vw_grupolar_genbi_transferencias",
+    "expected_value": 7073.91
+  },
+  {
+    "id": "GQ08",
+    "question": "cuantas transferencias se registraron en agosto de 2025?",
+    "metric": "numero_transferencias",
+    "reference_sql": "SELECT COUNT(DISTINCT transaccion_id) AS numero_transferencias FROM vw_grupolar_genbi_transferencias WHERE anio = 2025 AND mes = 8",
+    "expected_value": 99
+  },
+  {
+    "id": "GQ09",
+    "question": "cual fue el valor transferido hacia la Obra 02 - Surquillo?",
+    "metric": "valor_transferido",
+    "reference_sql": "SELECT SUM(monto_debe) AS valor_transferido FROM vw_grupolar_genbi_transferencias WHERE sede_destino = 'Obra 02 - Surquillo'",
+    "expected_value": 449970.58
+  },
+  {
+    "id": "GQ10",
+    "question": "cuantas transferencias registro el usuario LCASTRO?",
+    "metric": "numero_transferencias",
+    "reference_sql": "SELECT COUNT(DISTINCT transaccion_id) AS numero_transferencias FROM vw_grupolar_genbi_transferencias WHERE usuario = 'LCASTRO'",
+    "expected_value": 160
+  },
+  {
+    "id": "GQ11",
+    "question": "cual fue el monto total neto de la cuenta 24111?",
+    "metric": "monto_total_neto",
+    "reference_sql": "SELECT SUM(monto_debe - monto_haber) AS monto_total_neto FROM vw_grupolar_genbi_transferencias WHERE codigo_cuenta = '24111'",
+    "expected_value": 879179.42
+  },
+  {
+    "id": "GQ12",
+    "question": "cual fue el costo unitario promedio del Cemento Portland Tipo I bolsa 42.5 kg?",
+    "metric": "costo_unitario_promedio",
+    "reference_sql": "SELECT SUM(monto_debe) / NULLIF(SUM(cantidad_recursos), 0) AS costo_unitario_promedio FROM vw_grupolar_genbi_transferencias WHERE descripcion_recurso = 'Cemento Portland Tipo I bolsa 42.5 kg'",
+    "expected_value": 28.2723
+  },
+  {
+    "id": "GQ13",
+    "question": "cuantos comprobantes registro el usuario HUERT en diciembre de 2025?",
+    "metric": "numero_comprobantes",
+    "reference_sql": "SELECT COUNT(DISTINCT num_comprobante) AS numero_comprobantes FROM vw_grupolar_genbi_transferencias WHERE usuario = 'HUERT' AND anio = 2025 AND mes = 12",
+    "expected_value": 5
+  }
+]

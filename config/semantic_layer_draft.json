@@ -1,0 +1,105 @@
+{
+  "dataset": {
+    "name": "Grupo Lar - Transferencias internas de recursos",
+    "business_domain": "Construcción - logística interna de materiales entre almacenes y obras",
+    "database": "grupolar_master",
+    "allowed_view": "vw_grupolar_genbi_transferencias",
+    "grain": "One row represents one line of an internal resource transfer inside a transfer voucher (num_comprobante). A voucher can contain several lines (several resources)."
+  },
+  "dimensions": [
+    {
+      "name": "Transfer Voucher",
+      "key": "num_comprobante",
+      "description": "Unique identifier for each internal resource transfer voucher."
+    },
+    {
+      "name": "Transfer Date",
+      "key": "fecha_transferencia",
+      "description": "Date when the internal resource transfer occurred."
+    },
+    {
+      "name": "Resource",
+      "key": "cod_recurso",
+      "description": "Identifier for the resource being transferred."
+    },
+    {
+      "name": "Resource Description",
+      "key": "descripcion_recurso",
+      "description": "Description of the resource being transferred."
+    },
+    {
+      "name": "Resource Unit",
+      "key": "unidad_medida",
+      "description": "Unit of measure for the resource (e.g., bags, m3, kg, gallons, units)."
+    },
+    {
+      "name": "Origin Location",
+      "key": "cod_sede_origen",
+      "description": "Code for the origin location of the transfer."
+    },
+    {
+      "name": "Destination Location",
+      "key": "cod_sede_destino",
+      "description": "Code for the destination location of the transfer."
+    },
+    {
+      "name": "Time",
+      "key": "anio",
+      "description": "Year of the transfer."
+    },
+    {
+      "name": "Month",
+      "key": "mes",
+      "description": "Month of the transfer."
+    },
+    {
+      "name": "Quarter",
+      "key": "trimestre",
+      "description": "Quarter of the transfer."
+    }
+  ],
+  "candidate_measures": [
+    {
+      "name": "Quantity of Resources",
+      "key": "cantidad_recursos",
+      "description": "Total quantity of resources transferred."
+    },
+    {
+      "name": "Value of Resources Transferred",
+      "key": "monto_debe",
+      "description": "Value of resources transferred (debit)."
+    },
+    {
+      "name": "Reversed Value",
+      "key": "monto_haber",
+      "description": "Value of returns or cancellations (credit)."
+    },
+    {
+      "name": "Net Value",
+      "key": "monto_total",
+      "description": "Net value of the transfer (monto_debe - monto_haber)."
+    }
+  ],
+  "non_additive_fields": [
+    "monto_haber",
+    "monto_total"
+  ],
+  "suggested_synonyms": {
+    "monto_debe": "Transfer Value",
+    "monto_haber": "Return Value",
+    "monto_total": "Net Transfer Value"
+  },
+  "ambiguities": [
+    "The term 'monto_total' is calculated as'monto_debe - monto_haber'. It is important to clarify that this is a derived measure and not stored in the fact table."
+  ],
+  "validation_questions": [
+    {
+      "question": "Should'monto_total' be included as a measure? If so, should it be treated as additive or non-additive?",
+      "context": "Given the grain of the dataset, summing'monto_total' across multiple rows may not be meaningful as it represents the net value of each individual transfer line."
+    },
+    {
+      "question": "Are there any other fields that should not be summed due to the grain of the dataset?",
+      "context": "Given the grain, fields like'monto_haber' and'monto_total' should not be summed across multiple rows as they represent individual transfer line values."
+    }
+  ]
+}

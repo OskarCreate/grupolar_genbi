@@ -1,0 +1,371 @@
+{
+  "dataset_name": "Grupo Lar - Transferencias internas de recursos",
+  "business_domain": "Construcción - logística interna de materiales entre almacenes y obras",
+  "database": "grupolar_master",
+  "allowed_view": "vw_grupolar_genbi_transferencias",
+  "grain_hint": "One row represents one line of an internal resource transfer inside a transfer voucher (num_comprobante). A voucher can contain several lines (several resources).",
+  "known_business_notes": [
+    "monto_debe is the value of the transferred resources; monto_haber is the reversed amount (returns or cancellations).",
+    "monto_total is a calculated field: monto_debe - monto_haber. It is not stored in the fact table.",
+    "cantidad_recursos is expressed in the unit of measure of each resource (bags, m3, kg, gallons, units...).",
+    "Each transfer has two locations: sede_origen (sends) and sede_destino (receives). Both come from the same dimension (role-playing dimension).",
+    "Currency is Peruvian soles (PEN). Data covers January to December 2025.",
+    "The chart of accounts is real (CONCAR); transfers, resources and locations are simulated for academic purposes."
+  ],
+  "columns": [
+    {
+      "name": "transaccion_id",
+      "type": "varchar"
+    },
+    {
+      "name": "num_comprobante",
+      "type": "varchar"
+    },
+    {
+      "name": "fecha_transferencia",
+      "type": "date"
+    },
+    {
+      "name": "dia",
+      "type": "bigint"
+    },
+    {
+      "name": "mes",
+      "type": "bigint"
+    },
+    {
+      "name": "nombre_mes",
+      "type": "varchar(9)"
+    },
+    {
+      "name": "trimestre",
+      "type": "bigint"
+    },
+    {
+      "name": "anio",
+      "type": "bigint"
+    },
+    {
+      "name": "periodo_mes",
+      "type": "varchar"
+    },
+    {
+      "name": "codigo_cuenta",
+      "type": "varchar"
+    },
+    {
+      "name": "descripcion_cuenta",
+      "type": "varchar"
+    },
+    {
+      "name": "clase_contable",
+      "type": "varchar(34)"
+    },
+    {
+      "name": "cuenta_mayor",
+      "type": "varchar"
+    },
+    {
+      "name": "cod_recurso",
+      "type": "varchar"
+    },
+    {
+      "name": "descripcion_recurso",
+      "type": "varchar"
+    },
+    {
+      "name": "familia_recurso",
+      "type": "varchar"
+    },
+    {
+      "name": "unidad_medida",
+      "type": "varchar"
+    },
+    {
+      "name": "cod_sede_origen",
+      "type": "varchar"
+    },
+    {
+      "name": "sede_origen",
+      "type": "varchar"
+    },
+    {
+      "name": "tipo_sede_origen",
+      "type": "varchar"
+    },
+    {
+      "name": "cod_sede_destino",
+      "type": "varchar"
+    },
+    {
+      "name": "sede_destino",
+      "type": "varchar"
+    },
+    {
+      "name": "tipo_sede_destino",
+      "type": "varchar"
+    },
+    {
+      "name": "usuario",
+      "type": "varchar"
+    },
+    {
+      "name": "cantidad_recursos",
+      "type": "double"
+    },
+    {
+      "name": "monto_debe",
+      "type": "double"
+    },
+    {
+      "name": "monto_haber",
+      "type": "double"
+    },
+    {
+      "name": "monto_total",
+      "type": "double"
+    }
+  ],
+  "sample_rows": [
+    {
+      "transaccion_id": "TRF-000001-1",
+      "num_comprobante": "TRF-000001",
+      "fecha_transferencia": "2025-03-03",
+      "dia": "3",
+      "mes": "3",
+      "nombre_mes": "Marzo",
+      "trimestre": "1",
+      "anio": "2025",
+      "periodo_mes": "2025-03",
+      "codigo_cuenta": "253",
+      "descripcion_cuenta": "Repuestos",
+      "clase_contable": "Activo realizable",
+      "cuenta_mayor": "25",
+      "cod_recurso": "REP003",
+      "descripcion_recurso": "Broca SDS 1/2\"",
+      "familia_recurso": "REPUESTOS",
+      "unidad_medida": "UND",
+      "cod_sede_origen": "OB06",
+      "sede_origen": "Obra 06 - Chorrillos",
+      "tipo_sede_origen": "OBRA",
+      "cod_sede_destino": "OB01",
+      "sede_destino": "Obra 01 - Jesús María",
+      "tipo_sede_destino": "OBRA",
+      "usuario": "JPEREZ",
+      "cantidad_recursos": "78.0",
+      "monto_debe": "2190.27",
+      "monto_haber": "0.0",
+      "monto_total": "2190.27"
+    },
+    {
+      "transaccion_id": "TRF-000001-2",
+      "num_comprobante": "TRF-000001",
+      "fecha_transferencia": "2025-03-03",
+      "dia": "3",
+      "mes": "3",
+      "nombre_mes": "Marzo",
+      "trimestre": "1",
+      "anio": "2025",
+      "periodo_mes": "2025-03",
+      "codigo_cuenta": "253",
+      "descripcion_cuenta": "Repuestos",
+      "clase_contable": "Activo realizable",
+      "cuenta_mayor": "25",
+      "cod_recurso": "REP002",
+      "descripcion_recurso": "Disco de corte 7\"",
+      "familia_recurso": "REPUESTOS",
+      "unidad_medida": "UND",
+      "cod_sede_origen": "OB06",
+      "sede_origen": "Obra 06 - Chorrillos",
+      "tipo_sede_origen": "OBRA",
+      "cod_sede_destino": "OB01",
+      "sede_destino": "Obra 01 - Jesús María",
+      "tipo_sede_destino": "OBRA",
+      "usuario": "JPEREZ",
+      "cantidad_recursos": "103.0",
+      "monto_debe": "1294.18",
+      "monto_haber": "0.0",
+      "monto_total": "1294.18"
+    },
+    {
+      "transaccion_id": "TRF-000001-3",
+      "num_comprobante": "TRF-000001",
+      "fecha_transferencia": "2025-03-03",
+      "dia": "3",
+      "mes": "3",
+      "nombre_mes": "Marzo",
+      "trimestre": "1",
+      "anio": "2025",
+      "periodo_mes": "2025-03",
+      "codigo_cuenta": "24111",
+      "descripcion_cuenta": "Materias primas - Materias primas - Costo [24111]",
+      "clase_contable": "Activo realizable",
+      "cuenta_mayor": "24",
+      "cod_recurso": "MAT004",
+      "descripcion_recurso": "Ladrillo King Kong 18 huecos",
+      "familia_recurso": "MATERIAS PRIMAS",
+      "unidad_medida": "MIL",
+      "cod_sede_origen": "OB06",
+      "sede_origen": "Obra 06 - Chorrillos",
+      "tipo_sede_origen": "OBRA",
+      "cod_sede_destino": "OB01",
+      "sede_destino": "Obra 01 - Jesús María",
+      "tipo_sede_destino": "OBRA",
+      "usuario": "JPEREZ",
+      "cantidad_recursos": "3.0",
+      "monto_debe": "2995.88",
+      "monto_haber": "0.0",
+      "monto_total": "2995.88"
+    },
+    {
+      "transaccion_id": "TRF-000004-1",
+      "num_comprobante": "TRF-000004",
+      "fecha_transferencia": "2025-08-30",
+      "dia": "30",
+      "mes": "8",
+      "nombre_mes": "Agosto",
+      "trimestre": "3",
+      "anio": "2025",
+      "periodo_mes": "2025-08",
+      "codigo_cuenta": "251",
+      "descripcion_cuenta": "Materiales auxiliares",
+      "clase_contable": "Activo realizable",
+      "cuenta_mayor": "25",
+      "cod_recurso": "AUX006",
+      "descripcion_recurso": "Andamio tubular cuerpo",
+      "familia_recurso": "MATERIALES AUXILIARES",
+      "unidad_medida": "UND",
+      "cod_sede_origen": "OB01",
+      "sede_origen": "Obra 01 - Jesús María",
+      "tipo_sede_origen": "OBRA",
+      "cod_sede_destino": "OB05",
+      "sede_destino": "Obra 05 - Breña",
+      "tipo_sede_destino": "OBRA",
+      "usuario": "LCASTRO",
+      "cantidad_recursos": "56.0",
+      "monto_debe": "18102.52",
+      "monto_haber": "0.0",
+      "monto_total": "18102.52"
+    },
+    {
+      "transaccion_id": "TRF-000004-2",
+      "num_comprobante": "TRF-000004",
+      "fecha_transferencia": "2025-08-30",
+      "dia": "30",
+      "mes": "8",
+      "nombre_mes": "Agosto",
+      "trimestre": "3",
+      "anio": "2025",
+      "periodo_mes": "2025-08",
+      "codigo_cuenta": "251",
+      "descripcion_cuenta": "Materiales auxiliares",
+      "clase_contable": "Activo realizable",
+      "cuenta_mayor": "25",
+      "cod_recurso": "AUX005",
+      "descripcion_recurso": "Encofrado metálico panel 1.2x0.6",
+      "familia_recurso": "MATERIALES AUXILIARES",
+      "unidad_medida": "UND",
+      "cod_sede_origen": "OB01",
+      "sede_origen": "Obra 01 - Jesús María",
+      "tipo_sede_origen": "OBRA",
+      "cod_sede_destino": "OB05",
+      "sede_destino": "Obra 05 - Breña",
+      "tipo_sede_destino": "OBRA",
+      "usuario": "LCASTRO",
+      "cantidad_recursos": "94.0",
+      "monto_debe": "17367.98",
+      "monto_haber": "0.0",
+      "monto_total": "17367.98"
+    },
+    {
+      "transaccion_id": "TRF-000004-3",
+      "num_comprobante": "TRF-000004",
+      "fecha_transferencia": "2025-08-30",
+      "dia": "30",
+      "mes": "8",
+      "nombre_mes": "Agosto",
+      "trimestre": "3",
+      "anio": "2025",
+      "periodo_mes": "2025-08",
+      "codigo_cuenta": "24111",
+      "descripcion_cuenta": "Materias primas - Materias primas - Costo [24111]",
+      "clase_contable": "Activo realizable",
+      "cuenta_mayor": "24",
+      "cod_recurso": "MAT010",
+      "descripcion_recurso": "Porcelanato 60x60 cm",
+      "familia_recurso": "MATERIAS PRIMAS",
+      "unidad_medida": "M2",
+      "cod_sede_origen": "OB01",
+      "sede_origen": "Obra 01 - Jesús María",
+      "tipo_sede_origen": "OBRA",
+      "cod_sede_destino": "OB05",
+      "sede_destino": "Obra 05 - Breña",
+      "tipo_sede_destino": "OBRA",
+      "usuario": "LCASTRO",
+      "cantidad_recursos": "111.0",
+      "monto_debe": "0.0",
+      "monto_haber": "6009.45",
+      "monto_total": "-6009.45"
+    },
+    {
+      "transaccion_id": "TRF-000006-1",
+      "num_comprobante": "TRF-000006",
+      "fecha_transferencia": "2025-06-13",
+      "dia": "13",
+      "mes": "6",
+      "nombre_mes": "Junio",
+      "trimestre": "2",
+      "anio": "2025",
+      "periodo_mes": "2025-06",
+      "codigo_cuenta": "251",
+      "descripcion_cuenta": "Materiales auxiliares",
+      "clase_contable": "Activo realizable",
+      "cuenta_mayor": "25",
+      "cod_recurso": "AUX002",
+      "descripcion_recurso": "Clavos 3\" con cabeza",
+      "familia_recurso": "MATERIALES AUXILIARES",
+      "unidad_medida": "KG",
+      "cod_sede_origen": "OB04",
+      "sede_origen": "Obra 04 - Lince",
+      "tipo_sede_origen": "OBRA",
+      "cod_sede_destino": "OB06",
+      "sede_destino": "Obra 06 - Chorrillos",
+      "tipo_sede_destino": "OBRA",
+      "usuario": "MROJAS",
+      "cantidad_recursos": "112.0",
+      "monto_debe": "658.49",
+      "monto_haber": "0.0",
+      "monto_total": "658.49"
+    },
+    {
+      "transaccion_id": "TRF-000006-2",
+      "num_comprobante": "TRF-000006",
+      "fecha_transferencia": "2025-06-13",
+      "dia": "13",
+      "mes": "6",
+      "nombre_mes": "Junio",
+      "trimestre": "2",
+      "anio": "2025",
+      "periodo_mes": "2025-06",
+      "codigo_cuenta": "251",
+      "descripcion_cuenta": "Materiales auxiliares",
+      "clase_contable": "Activo realizable",
+      "cuenta_mayor": "25",
+      "cod_recurso": "AUX004",
+      "descripcion_recurso": "Guantes de cuero",
+      "familia_recurso": "MATERIALES AUXILIARES",
+      "unidad_medida": "PAR",
+      "cod_sede_origen": "OB04",
+      "sede_origen": "Obra 04 - Lince",
+      "tipo_sede_origen": "OBRA",
+      "cod_sede_destino": "OB06",
+      "sede_destino": "Obra 06 - Chorrillos",
+      "tipo_sede_destino": "OBRA",
+      "usuario": "MROJAS",
+      "cantidad_recursos": "52.0",
+      "monto_debe": "482.05",
+      "monto_haber": "0.0",
+      "monto_total": "482.05"
+    }
+  ]
+}

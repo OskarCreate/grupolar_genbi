@@ -1,0 +1,201 @@
+{
+  "dataset": "Grupo Lar - Transferencias internas de recursos",
+  "database": "grupolar_master",
+  "allowed_view": "vw_grupolar_genbi_transferencias",
+  "grain": "Una fila representa una línea de transferencia interna de un recurso dentro de un comprobante (num_comprobante). Un comprobante puede tener varias líneas.",
+  "status": "APPROVED - validada por el grupo a partir del borrador de Bedrock (ver docs/validacion_humana.md)",
+  "business_context": {
+    "company": "Grupo Lar",
+    "currency": "PEN",
+    "currency_symbol": "S/",
+    "locale": "es-PE",
+    "period_covered": "enero a diciembre de 2025",
+    "data_note": "El plan de cuentas es real (CONCAR). Las transferencias, recursos y sedes son simulados con fines académicos."
+  },
+  "dimensions": {
+    "fecha_transferencia": {
+      "column": "fecha_transferencia",
+      "label": "Fecha de transferencia",
+      "synonyms": ["fecha", "dia"]
+    },
+    "periodo_mes": {
+      "column": "periodo_mes",
+      "label": "Periodo (año-mes)",
+      "description": "Texto con formato YYYY-MM. Usar para tendencias mensuales y ordenar ascendente.",
+      "synonyms": ["por mes", "mensual", "evolucion", "tendencia"]
+    },
+    "nombre_mes": {
+      "column": "nombre_mes",
+      "label": "Mes",
+      "values": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"],
+      "description": "Para filtrar un mes usar la columna numérica mes (1-12) junto con anio."
+    },
+    "trimestre": {
+      "column": "trimestre",
+      "label": "Trimestre",
+      "description": "Número 1 a 4."
+    },
+    "anio": {
+      "column": "anio",
+      "label": "Año"
+    },
+    "cuenta_contable": {
+      "column": "codigo_cuenta",
+      "label": "Cuenta contable",
+      "description_column": "descripcion_cuenta",
+      "values": ["24111", "251", "2521", "2522", "2524", "253"],
+      "description": "codigo_cuenta es texto: filtrar con comillas, por ejemplo codigo_cuenta = '24111'.",
+      "synonyms": ["cuenta", "cuentas", "cuenta contable"]
+    },
+    "clase_contable": {
+      "column": "clase_contable",
+      "label": "Clase contable (PCGE)"
+    },
+    "recurso": {
+      "column": "descripcion_recurso",
+      "label": "Recurso",
+      "values": ["Cemento Portland Tipo I bolsa 42.5 kg", "Fierro corrugado 1/2\" x 9 m", "Fierro corrugado 3/8\" x 9 m", "Ladrillo King Kong 18 huecos", "Arena gruesa", "Piedra chancada 1/2\"", "Concreto premezclado f'c 210", "Tubería PVC 4\" desagüe", "Cable eléctrico THW 14 AWG rollo 100 m", "Porcelanato 60x60 cm", "Pintura látex blanco balde 4 gl", "Yeso bolsa 25 kg", "Alambre negro N.º 16", "Clavos 3\" con cabeza", "Casco de seguridad", "Guantes de cuero", "Encofrado metálico panel 1.2x0.6", "Andamio tubular cuerpo", "Petróleo diésel B5", "Gasolina 90", "Aceite hidráulico 68", "Grasa multipropósito", "Cinta señalizadora de peligro", "Filtro de aceite mezcladora", "Disco de corte 7\"", "Broca SDS 1/2\""],
+      "synonyms": ["recurso", "recursos", "material", "materiales", "insumo", "insumos"]
+    },
+    "familia_recurso": {
+      "column": "familia_recurso",
+      "label": "Familia de recurso",
+      "values": ["MATERIAS PRIMAS", "MATERIALES AUXILIARES", "REPUESTOS", "LUBRICANTES", "COMBUSTIBLES", "OTROS SUMINISTROS"],
+      "synonyms": ["familia", "categoria", "tipo de recurso"]
+    },
+    "unidad_medida": {
+      "column": "unidad_medida",
+      "label": "Unidad de medida"
+    },
+    "sede_origen": {
+      "column": "sede_origen",
+      "label": "Sede de origen (envía)",
+      "values": ["Almacén Central Lurín", "Almacén Norte Los Olivos", "Obra 01 - Jesús María", "Obra 02 - Surquillo", "Obra 03 - San Miguel", "Obra 04 - Lince", "Obra 05 - Breña", "Obra 06 - Chorrillos"],
+      "synonyms": ["envia", "transfiere", "sale de", "origen", "proveedora"]
+    },
+    "tipo_sede_origen": {
+      "column": "tipo_sede_origen",
+      "label": "Tipo de sede de origen",
+      "values": ["ALMACEN", "OBRA"]
+    },
+    "sede_destino": {
+      "column": "sede_destino",
+      "label": "Sede de destino (recibe)",
+      "values": ["Obra 01 - Jesús María", "Obra 02 - Surquillo", "Obra 03 - San Miguel", "Obra 04 - Lince", "Obra 05 - Breña", "Obra 06 - Chorrillos"],
+      "synonyms": ["recibe", "llega a", "destino", "hacia", "receptora"]
+    },
+    "tipo_sede_destino": {
+      "column": "tipo_sede_destino",
+      "label": "Tipo de sede de destino",
+      "values": ["ALMACEN", "OBRA"]
+    },
+    "usuario": {
+      "column": "usuario",
+      "label": "Usuario que registra",
+      "values": ["ASALAS", "HUERT", "JPEREZ", "LCASTRO", "MROJAS", "RQUISPE"],
+      "synonyms": ["usuario", "usuarios", "quien registra", "responsable"]
+    }
+  },
+  "measures": {
+    "numero_transferencias": {
+      "label": "N.º de transferencias",
+      "sql": "COUNT(DISTINCT transaccion_id)",
+      "synonyms": ["transferencias", "numero de transferencias", "cantidad de transferencias", "lineas de transferencia", "veces transferido", "rotacion"]
+    },
+    "numero_comprobantes": {
+      "label": "N.º de comprobantes",
+      "sql": "COUNT(DISTINCT num_comprobante)",
+      "synonyms": ["comprobantes", "numero de comprobantes", "documentos de transferencia", "guias de transferencia"]
+    },
+    "valor_transferido": {
+      "label": "Valor transferido (Monto Debe)",
+      "sql": "SUM(monto_debe)",
+      "synonyms": ["valor transferido", "valor", "monto debe", "total debe", "importe transferido", "valor de las transferencias"]
+    },
+    "monto_haber": {
+      "label": "Monto Haber (revertido)",
+      "sql": "SUM(monto_haber)",
+      "synonyms": ["monto haber", "haber", "monto revertido", "reversiones", "devoluciones", "anulaciones"]
+    },
+    "monto_total_neto": {
+      "label": "Monto Total neto",
+      "sql": "SUM(monto_total)",
+      "synonyms": ["monto total", "monto neto", "monto total neto", "saldo neto", "neto"]
+    },
+    "porcentaje_revertido": {
+      "label": "% revertido",
+      "sql": "SUM(monto_haber) * 100 / NULLIF(SUM(monto_debe), 0)",
+      "synonyms": ["porcentaje revertido", "% revertido", "porcentaje de reversion", "tasa de reversion", "desviacion contable"]
+    },
+    "valor_promedio_comprobante": {
+      "label": "Valor promedio por comprobante",
+      "sql": "SUM(monto_debe) / NULLIF(COUNT(DISTINCT num_comprobante), 0)",
+      "synonyms": ["valor promedio por comprobante", "promedio por comprobante", "valor medio por comprobante", "ticket promedio"]
+    },
+    "cantidad_transferida": {
+      "label": "Cantidad transferida",
+      "sql": "SUM(cantidad_recursos)",
+      "synonyms": ["cantidad de recursos", "cantidad transferida", "unidades transferidas", "cantidad", "unidades"]
+    },
+    "costo_unitario_promedio": {
+      "label": "Costo unitario promedio",
+      "sql": "SUM(monto_debe) / NULLIF(SUM(cantidad_recursos), 0)",
+      "synonyms": ["costo unitario promedio", "costo unitario", "precio unitario promedio", "costo promedio por unidad"]
+    },
+    "obras_destino": {
+      "label": "Obras destino distintas",
+      "sql": "COUNT(DISTINCT cod_sede_destino)",
+      "synonyms": ["obras destino", "numero de obras", "cuantas obras", "obras distintas"]
+    }
+  },
+  "business_rules": [
+    "Grano: una fila es una línea de transferencia, no un comprobante. El número de transferencias es COUNT(DISTINCT transaccion_id) y el número de comprobantes es COUNT(DISTINCT num_comprobante); nunca COUNT(num_comprobante).",
+    "Monto Total neto = Debe - Haber. Usar SUM(monto_total), que ya es monto_debe - monto_haber. Nunca sumar debe y haber.",
+    "Valor transferido = SUM(monto_debe). monto_haber representa reversiones (devoluciones o anulaciones), no transferencias nuevas.",
+    "cantidad_recursos está en la unidad de medida de cada recurso (bolsas, m3, kg, galones...). Solo se compara directamente dentro de un mismo recurso o unidad_medida. Si la pregunta pide cantidades entre recursos o sedes, incluir unidad_medida en el GROUP BY o advertir que se mezclan unidades.",
+    "Costo unitario promedio = SUM(monto_debe) / SUM(cantidad_recursos), siempre por recurso. Nunca usar AVG sobre un precio por fila.",
+    "Cada transferencia tiene dos roles de sede: sede_origen (envía, transfiere, sale) y sede_destino (recibe, llega). Si la pregunta no indica el rol, usar sede_destino.",
+    "Rotación entre obras = número de transferencias por recurso con tipo_sede_destino = 'OBRA'.",
+    "Para tendencias por mes agrupar por periodo_mes y ordenar ascendente. Para filtrar un mes usar anio y mes numérico (agosto 2025: anio = 2025 AND mes = 8). No usar EXTRACT ni DATE_TRUNC.",
+    "Los valores de texto se filtran con los valores exactos listados en cada dimensión. Un apóstrofo dentro de un literal se escribe doble (f''c 210).",
+    "Los montos están en soles peruanos (PEN, S/). No convertir a otra moneda."
+  ],
+  "ambiguities": {
+    "transaccion": {
+      "approved_default": "numero_transferencias",
+      "alternatives": ["numero_comprobantes"],
+      "note": "Transacción se interpreta como línea de transferencia. Si el usuario habla de comprobantes o documentos, usar numero_comprobantes."
+    },
+    "movimiento": {
+      "approved_default": "numero_transferencias",
+      "alternatives": ["valor_transferido", "cantidad_transferida"],
+      "note": "Movimiento se mide por número de transferencias, porque la cantidad mezcla unidades."
+    },
+    "monto": {
+      "approved_default": "monto_total_neto",
+      "alternatives": ["valor_transferido", "monto_haber"],
+      "note": "Monto sin especificar es el monto total neto (Debe - Haber)."
+    },
+    "mejor": {
+      "approved_default": "valor_transferido",
+      "alternatives": ["numero_transferencias", "monto_total_neto"],
+      "note": "Mejor, principal o más importante sin métrica explícita se mide por valor transferido."
+    },
+    "principal": {
+      "approved_default": "valor_transferido",
+      "alternatives": ["numero_transferencias", "monto_total_neto"],
+      "note": "Igual que mejor."
+    },
+    "sede": {
+      "type": "dimension",
+      "approved_default": "sede_destino",
+      "alternatives": ["sede_origen"],
+      "note": "Sede sin rol explícito se interpreta como sede de destino (la que recibe)."
+    },
+    "recursos": {
+      "approved_default": "valor_transferido",
+      "alternatives": ["numero_transferencias", "cantidad_transferida"],
+      "note": "Más recursos sin métrica explícita se mide por valor transferido, porque sumar cantidades mezcla unidades de medida."
+    }
+  }
+}
