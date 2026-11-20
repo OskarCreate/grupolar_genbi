@@ -55,10 +55,10 @@ V5 y V6 son la evidencia de dos reglas de negocio que la Semantic Layer tiene qu
 ## Paso 2 — Verificar Amazon Bedrock
 
 1. En la consola, región **us-east-1**, abre **Amazon Bedrock**.
-2. En el catálogo de modelos busca **Amazon Nova Micro** y pruébalo en el *Playground* con cualquier pregunta.
+2. En **Playground** → **Select model** elige **US Amazon Nova 2 Lite** y pruébalo con cualquier pregunta.
 3. Si te pide habilitar el acceso al modelo, habilítalo. En una cuenta de organización (tu cuenta es `POC-CLOUD-OPE-01`) puede que un administrador tenga que permitirlo.
 
-El modelo configurado es `us.amazon.nova-micro-v1:0` (perfil de inferencia de EE. UU.). Si da `ValidationException` por el ID, prueba con `amazon.nova-micro-v1:0`.
+El modelo configurado es `us.amazon.nova-2-lite-v1:0` (perfil de inferencia de EE. UU.). En us-east-1 Nova 2 Lite solo se invoca mediante perfil de inferencia, así que no uses el ID sin prefijo. Si el perfil `us.` falla, prueba con el global: `global.amazon.nova-2-lite-v1:0`.
 
 ---
 
@@ -128,7 +128,7 @@ Copia `config/settings.example.json` como `config/settings.json`. Ya viene con t
   "allowed_view": "vw_grupolar_genbi_transferencias",
   "athena_output_s3": "s3://sql-event-s3/athena-results/",
   "athena_workgroup": "primary",
-  "bedrock_model_id": "us.amazon.nova-micro-v1:0"
+  "bedrock_model_id": "us.amazon.nova-2-lite-v1:0"
 }
 ```
 
@@ -311,6 +311,54 @@ Preguntas de ambigüedad (para la demo):
 
 ---
 
+## Dashboard ejecutivo "Data Hub"
+
+`streamlit run app.py` abre el Data Hub con el diseño del wireframe (diapositivas 8–10 del PPT): barra lateral con **Análisis** y **Gestión**, barra de filtros y tarjetas.
+
+| Página | Contenido | Visualización óptima (Parte B) |
+|---|---|---|
+| **Resumen ejecutivo** | 5 KPI, valor transferido por mes, transferencias por usuario, movimiento por sede, cuentas contables, GenBI Insights y recursos con mayor rotación | Wireframe completo |
+| **Transferencias** | KPI, transferencias por mes, valor por mes y detalle mensual | P5 · gráfico de líneas |
+| **Sedes y obras** | Valor enviado vs. recibido por sede y perfil proveedora / receptora | P1 · barras apiladas |
+| **Recursos** | Top 10 recursos hacia obras y tabla con unidad y cobertura | P3 · barras horizontales |
+| **Usuarios** | Actividad de cada usuario por mes y participación | P4 · mapa de calor |
+| **Reportes** | Monto neto por cuenta contable y GenBI Insights | P2 · treemap |
+| **Generar dashboard** | Escribes un prompt y GenBI arma KPI, gráficos y filtros (ver sección siguiente) | La que elige Bedrock, validada |
+| **Pregunta a GenBI** | NL-to-SQL (Bedrock + Semantic Layer + SQL Guard + Athena) | Gráfico automático |
+
+Cómo funciona:
+
+- **Filtros** (Año, Mes, Sede, Tipo de sede, Cuenta) se aplican a todas las páginas y se mantienen al cambiar de página. Un clic en una barra del gráfico "Valor transferido" filtra ese mes.
+  - *Sede* incluye lo que la sede envía y lo que recibe.
+  - *Tipo de sede* se aplica a la sede de destino (regla de la capa semántica); como los almacenes solo envían, "Almacén" no devuelve filas y la página lo explica.
+- Los datos salen de `vw_grupolar_genbi_transferencias` con **SQL fijo** (`src/dashboard_data.py`), con las métricas de `config/semantic_layer.json`, y cada consulta pasa por el SQL Guard. El expander "Ver SQL gobernado" las muestra.
+- Con un mes elegido, los KPI muestran la variación frente al mes anterior; sin mes, el acumulado del año.
+- **Cantidad transferida** aparece porque está en el wireframe y en el prompt ejecutivo, pero suma unidades distintas (bolsas, m3, kg…): es referencial. Para comparar sedes usa "Valor S/".
+- **Ver análisis completo con Bedrock** llama a Bedrock solo al pulsarlo y solo con los resultados mostrados.
+- **Exportar reporte** y **Descargar CSV** descargan los datos del filtro actual. Los resultados se guardan en caché 10 minutos.
+
+Archivos: `app.py` (navegación), `views/` (una página por sección), `src/dashboard_generator.py` (dashboard generativo), `src/dash.py` (componentes y gráficos), `src/ui.py` (estilos y barra lateral), `src/dashboard_data.py` (consultas) y `.streamlit/config.toml` (tema).
+
+---
+
+## Generar dashboard (dashboard generativo)
+
+En la barra lateral, **GenBI → Generar dashboard**. Escribes un prompt (por ejemplo el *prompt ejecutivo* del PPT, que viene precargado) y la app construye el dashboard: KPI, gráficos y filtros.
+
+Cómo funciona (`src/dashboard_generator.py` y `views/generar.py`):
+
+1. **Bedrock planifica** (1 llamada): recibe el catálogo aprobado (medidas, dimensiones, reglas y ambigüedades de `config/semantic_layer.json`) y devuelve solo un plan JSON: qué KPI, qué gráfico (medida × dimensión × tipo), qué filtros. **No escribe SQL.**
+2. **La capa semántica valida el plan:** descarta medidas o dimensiones que no existen, corrige tipos de gráfico incompatibles (por ejemplo, una línea sin dimensión de tiempo pasa a barras, o un treemap de porcentajes) y agrega las advertencias de las reglas de negocio. Todo se muestra en "Cómo interpretó GenBI tu pedido → Ajustes de gobierno".
+3. **El SQL lo arma la app** con las fórmulas aprobadas, pasa por el SQL Guard y se ejecuta en Athena. Si cambias un filtro, solo se vuelve a consultar Athena (no se llama otra vez a Bedrock).
+4. Opcional: **Generar lectura con Bedrock** redacta un resumen ejecutivo usando solo las cifras calculadas.
+5. **Descargar plan (JSON)** guarda el prompt, el plan validado, los ajustes y todo el SQL: sirve como evidencia para el informe.
+
+Tipos de gráfico disponibles: línea, barras, barras horizontales, barras apiladas (incluida enviado vs. recibido por sede), treemap, dona, mapa de calor y tabla.
+
+Pruebas: `python -m unittest discover -s tests` incluye `tests/test_dashboard_generator.py`, que comprueba que el plan se valida y que todo el SQL generado pasa el SQL Guard.
+
+---
+
 ## Cambios respecto al código del docente
 
 | Archivo | Cambio | Por qué |
@@ -341,7 +389,7 @@ python -m unittest tests.test_sql_guard -v
 | `Missing config/settings.json` | Copia `settings.example.json` como `settings.json`. |
 | `ModuleNotFoundError: No module named 'src'` | No definiste `PYTHONPATH` o ejecutaste desde `scripts/`. |
 | `AccessDeniedException` en Bedrock | Falta acceso al modelo o el permiso `bedrock:InvokeModel`. |
-| `ValidationException` con el model ID | Cambia a `amazon.nova-micro-v1:0` o revisa la región. |
+| `ValidationException` con el model ID | Usa `us.amazon.nova-2-lite-v1:0` o `global.amazon.nova-2-lite-v1:0` y región `us-east-1`. |
 | Athena: `Table ... does not exist` | No creaste la vista o está en otra base: debe estar en `grupolar_master`. |
 | Athena: `output location` | Revisa `athena_output_s3` y el permiso de escritura en S3. |
 | `SQL Guard bloqueó la consulta` | Es lo esperado si el LLM intenta otra tabla, `SELECT *` o `WITH`. Reformula la pregunta o agrega una regla. |
